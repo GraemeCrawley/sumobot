@@ -70,6 +70,13 @@ void loop() {
     String two = "TWO: ";
     String stringTwo = two + prevDist2;
     //Serial.println((stringTwo));
+    
+    
+    float farAngle = (-sq(prevDist) + sq(prevDist2) + sq(4))/(2*4*prevDist2);
+    //float leftAngle = acos((2*sin(farAngle))/4);
+    //float rightAngle = 180 - (leftAngle + farAngle);
+    Serial.println(farAngle);
+    
   }
   else if((abs(prevDist2 - prevDist) > 5) & (prevDist > prevDist2)){
     String one = "ONE: ";
@@ -77,11 +84,13 @@ void loop() {
     //Serial.println((stringOne));
     //Serial.println(prevDist);
     //Serial.println(prevDist2);
-    Serial.println(prevDist^2 - ((prevDist2)^2));
     //Serial.println(2*4*prevDist);
-    //float farAngle = (prevDist^2 - (prevDist2)^2 + 4^2)/(2*4*prevDist);
+    //float farAngle = (sq(prevDist) - sq(prevDist2) + sq(4))/(2*4*prevDist);
     //Serial.println(farAngle);
     
+    float farAngle = (sq(prevDist) - sq(prevDist2) + sq(4))/(2*4*prevDist);
+    Serial.println(farAngle);
+
     
   }
   else {
@@ -94,16 +103,17 @@ void loop() {
   //Serial.println(prevDist^2 - (prevDist2)^2 + 4^2);
   //Serial.println(2*4*prevDist);
  
-  //float farAngle = (prevDist^2 - (prevDist2)^2 + 4^2)/(2*4*prevDist);
-  //float leftAngle = acos((2*sin(farAngle))/4);
-  //float rightAngle = 180 - (leftAngle + farAngle);
+  float farAngle = (sq(prevDist) + sq(prevDist2) - sq(4))/(2*4*prevDist);
+  float leftAngle = acos((2*sin(farAngle))/4);
+  float rightAngle = 180 - (leftAngle + farAngle);
   
-   //if(abs(((prevLeftAngle) - (leftAngle)) > 1) or (abs((prevRightAngle) - (rightAngle)) > 1)){
-     //Serial.println(farAngle);
+   if(abs(((prevLeftAngle) - (leftAngle)) > 1) or (abs((prevRightAngle) - (rightAngle)) > 1)){
+     //Serial.println(leftAngle);
      //Serial.println(rightAngle);
-     //prevLeftAngle = leftAngle;
-     //prevRightAngle = rightAngle;
-  //}
+     prevLeftAngle = leftAngle;
+     prevRightAngle = rightAngle;
+     prevFarAngle = farAngle;
+  }
 
    
   
