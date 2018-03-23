@@ -1,3 +1,9 @@
+
+//Instantiate a new advanced serial object with 500 transmit slots
+
+
+
+
 #define trigPin 2// GREY
 #define echoPin 3// PURPLE
 #define trigPin2 4
@@ -22,12 +28,13 @@
 //RIGHT:
 
 
-
 int prevDist = 0;
 int prevDist2 = 0;
 int prevLeftAngle = 0;
 int prevRightAngle = 0;
 int prevFarAngle = 0;
+int update = 0;
+int update2 = 0;
 
 
 void setup() {
@@ -56,65 +63,63 @@ void loop() {
   digitalWrite(trigPin2, LOW);
   duration2 = pulseIn(echoPin2, HIGH);
   distance2 = (duration2/2) / 29.1;
-
+  
+  //Set up the distances to evaluate at intervals greater than 1
   if(abs(prevDist - distance) > 1 & distance < 50){
     prevDist = distance;
+    update = 1;
   }
 
   if(abs(prevDist2 - distance2) > 1 & distance2 < 50){
     prevDist2 = distance2;
+    update2 = 1;
   }
   
-  
-  if(abs(prevDist2 - prevDist) > 5 & (prevDist2 > prevDist)){
-    String two = "TWO: ";
-    String stringTwo = two + prevDist2;
-    //Serial.println((stringTwo));
-    
-    
-    float farAngle = (-sq(prevDist) + sq(prevDist2) + sq(4))/(2*4*prevDist2);
-    //float leftAngle = acos((2*sin(farAngle))/4);
-    //float rightAngle = 180 - (leftAngle + farAngle);
-    Serial.println(farAngle);
-    
+  //Print X and Y
+  if(update or update2){
+    float x = calcX(prevDist, prevDist2);
+    float y = calcY(prevDist, prevDist2);
+    Serial.println(x);
+    //Serial.println(y);
   }
-  else if((abs(prevDist2 - prevDist) > 5) & (prevDist > prevDist2)){
-    String one = "ONE: ";
-    String stringOne = one + prevDist;
-    //Serial.println((stringOne));
-    //Serial.println(prevDist);
-    //Serial.println(prevDist2);
-    //Serial.println(2*4*prevDist);
-    //float farAngle = (sq(prevDist) - sq(prevDist2) + sq(4))/(2*4*prevDist);
-    //Serial.println(farAngle);
-    
-    float farAngle = (sq(prevDist) - sq(prevDist2) + sq(4))/(2*4*prevDist);
-    Serial.println(farAngle);
+  update = 0;
+  update2 = 0;
+  
+  
+  
+}
 
+float calcX(float distLeft, float distRight){
+  float x = 20;
+  float thetaLeft = acos((sq(distRight) + sq(4) - sq(distLeft))/(2*distRight*4));
+  float thetaRight = acos((sq(distLeft) + sq(4) - sq(distRight))/(2*distLeft*4));
+  if(distRight > distLeft){
+    //float y = distRight*sin(thetaRight);
+    x = distRight*cos(thetaRight);
     
   }
-  else {
-    String both = "BOTH: ";
-    String stringThree = both + (prevDist+prevDist2)/2;
-    //Serial.println((stringThree));
-  }
-  
-  //angles
-  //Serial.println(prevDist^2 - (prevDist2)^2 + 4^2);
-  //Serial.println(2*4*prevDist);
  
-  float farAngle = (sq(prevDist) + sq(prevDist2) - sq(4))/(2*4*prevDist);
-  float leftAngle = acos((2*sin(farAngle))/4);
-  float rightAngle = 180 - (leftAngle + farAngle);
-  
-   if(abs(((prevLeftAngle) - (leftAngle)) > 1) or (abs((prevRightAngle) - (rightAngle)) > 1)){
-     //Serial.println(leftAngle);
-     //Serial.println(rightAngle);
-     prevLeftAngle = leftAngle;
-     prevRightAngle = rightAngle;
-     prevFarAngle = farAngle;
+  else{
+    //float y = distLeft*sin(thetaLeft);
+    x = -distLeft*cos(thetaLeft);
   }
+  return x;
+  
+}
 
-   
+float calcY(float distLeft, float distRight){
+  float y = 10;
+  float thetaLeft = acos((sq(distRight) + sq(4) - sq(distLeft))/(2*distRight*4));
+  float thetaRight = acos((sq(distLeft) + sq(4) - sq(distRight))/(2*distLeft*4));
+  if(distRight > distLeft){
+    y = distRight*sin(thetaRight);
+    //float x = distRight*cos(thetaRight);
+  }
+ 
+  else{
+    y = distLeft*sin(thetaLeft);
+    //float x = distLeft*cos(thetaLeft);
+  }
+  return y;
   
 }
